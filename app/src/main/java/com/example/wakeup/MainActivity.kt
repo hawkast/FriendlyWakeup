@@ -17,6 +17,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
@@ -24,6 +25,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 
 import androidx.compose.material.Switch
+import androidx.compose.material.TextField
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -37,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -58,16 +61,17 @@ class MainActivity : AppCompatActivity() {
 
   // Chiamata alla funzione dalla nuova istanza
 
-
+var isButtonEnabled by  mutableStateOf(true)
 var isAlarmRinging by mutableStateOf(false)
+var isAggressive by mutableStateOf(false)
 @Composable
 fun MainScreen() {
     var alarmTime by remember { mutableStateOf("12:00") }
-    var isAggressive by remember { mutableStateOf(false) }
+   // var isAggressive by remember { mutableStateOf(false) }
     // tracciare il sta suonando
 
     val context = LocalContext.current
-
+if(isAggressive==true){ QuizContent()}
     // Aggiunto DisposableEffect per gestire la ripetizione del messaggio
 
 
@@ -92,8 +96,11 @@ fun MainScreen() {
 
         Switch(
             checked = isAggressive,
+
             onCheckedChange = {
                 isAggressive = it
+                isAggressive=true
+                isButtonEnabled=false
             },
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -104,6 +111,7 @@ fun MainScreen() {
         Button(
             onClick = {
            setAlarm(alarmTime,isAggressive,context)
+                showImpostedMessage(context)
             },
             modifier = Modifier.fillMaxWidth(),
 
@@ -122,8 +130,13 @@ fun MainScreen() {
         // Pulsante per spegnere l'allarme
         Button(
             onClick = {
-                isAlarmRinging = false
+
+                if( isAggressive==false){
+                    isButtonEnabled=true
+                isAlarmRinging = false}
+               // else if (isAggressive==true){ isButtonEnabled=false}
             },
+            enabled= isButtonEnabled,
             modifier = Modifier.fillMaxWidth()
 
 
@@ -175,6 +188,7 @@ fun test(){
     
 }
 
+
 fun setAlarm(alarmTime: String, isAggressive: Boolean, context: Context) {
     val hour = alarmTime.split(":")[0].toInt()
     val minute = alarmTime.split(":")[1].toInt()
@@ -199,8 +213,11 @@ fun setAlarm(alarmTime: String, isAggressive: Boolean, context: Context) {
                 // Visualizza il messaggio "Sta suonando!"
                 showRingMessage(context)
             } else {
+
                 // Se l'opzione aggressiva è attivata
                 // Aggiungi la logica per la domanda random
+
+
                 showAggressiveQuestion(context)
             }
         }, timeDifferenceMillis)
@@ -217,6 +234,59 @@ while (isAlarmRinging){
 
     }}
 
+@Composable
+fun QuizContent() {
+    // Valori prefissati di 'a' e 'b'
+    val aValue = 3.0
+    val bValue = 5.0
+
+    // Risultato corretto
+    val correctResult = 8.0
+
+    var userAnswer by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Domanda
+        Text("Qual è il risultato di $aValue + $bValue?")
+
+        // Campo di testo per la risposta dell'utente
+        OutlinedTextField(
+            value = userAnswer,
+            onValueChange = { userAnswer = it },
+            label = { Text("Inserisci la tua risposta") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
+
+        // Bottone per controllare la risposta
+        Button(
+            onClick = {
+                val isCorrect = userAnswer.toDoubleOrNull() == correctResult
+                val feedback = if (isCorrect) "Corretto!" else "Sbagliato. Riprova."
+if (isCorrect)
+{isAggressive=false
+isButtonEnabled=true}
+                // Puoi fare qualcosa con il feedback, ad esempio mostrarlo all'utente
+                // Oppure passare alla prossima domanda, ecc.
+                // In questo esempio, stiamo solo stampando il feedback sulla console.
+                println(feedback)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Text("Verifica Risposta")
+        }
+    }
+}
 fun showImpostedMessage(context: Context) {
 
     // Visualizza un messaggio o esegui altre azioni quando l'allarme suona
@@ -226,6 +296,9 @@ fun showImpostedMessage(context: Context) {
 fun showAggressiveQuestion(context: Context) {
     // Aggiungi qui la logica per la domanda aggressiva
     // Ad esempio, visualizza una domanda e aspetta una risposta
+    var one=5;
+    var two=3;
+
     Toast.makeText(context, "Domanda aggressiva!", Toast.LENGTH_SHORT).show()
 }
 
