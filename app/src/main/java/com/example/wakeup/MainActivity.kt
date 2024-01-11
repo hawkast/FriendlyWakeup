@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
 var isButtonEnabled by  mutableStateOf(true)
 var isAlarmRinging by mutableStateOf(false)
 var isAggressive by mutableStateOf(false)
+var isQuiz by mutableStateOf(false)
 @Composable
 fun MainScreen() {
     var alarmTime by remember { mutableStateOf("12:00") }
@@ -71,7 +72,7 @@ fun MainScreen() {
     // tracciare il sta suonando
 
     val context = LocalContext.current
-if(isAggressive==true){ QuizContent()}
+if(isAggressive==true && isQuiz==true){ QuizContent()}
     // Aggiunto DisposableEffect per gestire la ripetizione del messaggio
 
 
@@ -212,8 +213,8 @@ fun setAlarm(alarmTime: String, isAggressive: Boolean, context: Context) {
                 // Se l'opzione aggressiva non è attivata
                 // Visualizza il messaggio "Sta suonando!"
                 showRingMessage(context)
-            } else {
-
+            } else  {
+isQuiz=true
                 // Se l'opzione aggressiva è attivata
                 // Aggiungi la logica per la domanda random
 
@@ -228,11 +229,11 @@ fun setAlarm(alarmTime: String, isAggressive: Boolean, context: Context) {
 }
 
 fun showRingMessage(context: Context) {
-while (isAlarmRinging){
+
 
                     Toast.makeText(context, "Sta suonando!", Toast.LENGTH_SHORT).show()
 
-    }}
+    }
 
 @Composable
 fun QuizContent() {
