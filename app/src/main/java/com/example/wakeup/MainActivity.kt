@@ -16,6 +16,8 @@ import android.os.Handler
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,6 +30,7 @@ import androidx.compose.material.OutlinedTextField
 
 import androidx.compose.material.Switch
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.lightColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.SnackbarHost
@@ -41,8 +44,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 
 
@@ -88,9 +93,15 @@ fun MainScreen() {
     // tracciare il sta suonando
 
     val context = LocalContext.current
-if(isAggressive==true && isQuiz==true){ QuizContent()}
 
 
+    Image(
+        painter = painterResource(id = R.drawable.imgsfondo), // Sostituisci con la tua risorsa immagine
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
+    if(isAggressive==true && isQuiz==true){ QuizContent()}
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -155,9 +166,12 @@ if(isAggressive==true && isQuiz==true){ QuizContent()}
                // else if (isAggressive==true){ isButtonEnabled=false}
             },
             enabled= isButtonEnabled,
-            modifier = Modifier.fillMaxWidth()
-
-
+            modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary,
+            ),
         ) {
             Text("Spegni Sveglia")
         }
@@ -240,10 +254,14 @@ fun QuizContent() {
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+
     ) {
         // Domanda
-        Text("Qual è il risultato di $aValue + $bValue?")
+        Text(text="Qual è il risultato di $aValue + $bValue?",
+            color= Color.Black,
+            modifier=Modifier
+                .background(Color.Green))
 
         OutlinedTextField(
             value = userAnswer,
@@ -252,7 +270,12 @@ fun QuizContent() {
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+colors=TextFieldDefaults.outlinedTextFieldColors(
+    textColor = MaterialTheme.colors.onSecondary,
+    backgroundColor = MaterialTheme.colors.primary
+
+)
         )
 
         Button(
@@ -268,7 +291,12 @@ isQuiz=false}
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+            colors=ButtonDefaults.outlinedButtonColors(
+                containerColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary,
+            )
+
         ) {
             Text("Verifica Risposta")
         }
