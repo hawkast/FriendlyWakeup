@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import android.media.MediaPlayer
 
 import android.content.Context
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Colors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
@@ -26,6 +28,7 @@ import androidx.compose.material.OutlinedTextField
 
 import androidx.compose.material.Switch
 import androidx.compose.material.TextField
+import androidx.compose.material.lightColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -37,20 +40,33 @@ import androidx.compose.material3.TimePickerLayoutType
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 
+
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import java.util.*
+val eee: Colors = lightColors(
+    primary = Color.Red,
+    secondary = Color(0xFFFFC107),
+    // Altri colori di tua scelta
+    onPrimary = Color.Black, // Colore del testo su colore primario
+    onSecondary = Color.Black, // Colore del testo su colore secondario
+    onBackground = Color.Black, // Colore del testo su sfondo
+    onSurface = Color.Black // Colore del testo su superficie
+)
+
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
 
-            MaterialTheme {
+          MyTheme {
                 MainScreen()
             }
         }
@@ -73,7 +89,6 @@ fun MainScreen() {
 
     val context = LocalContext.current
 if(isAggressive==true && isQuiz==true){ QuizContent()}
-    // Aggiunto DisposableEffect per gestire la ripetizione del messaggio
 
 
     Column(
@@ -134,7 +149,9 @@ if(isAggressive==true && isQuiz==true){ QuizContent()}
 
                 if( isAggressive==false){
                     isButtonEnabled=true
-                isAlarmRinging = false}
+                isAlarmRinging = false
+                stopAlarm()
+                }
                // else if (isAggressive==true){ isButtonEnabled=false}
             },
             enabled= isButtonEnabled,
@@ -145,54 +162,16 @@ if(isAggressive==true && isQuiz==true){ QuizContent()}
             Text("Spegni Sveglia")
         }
 
-test()
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun test(){
 
-    var showTimePicker by remember { mutableStateOf(false) }
-    val state = rememberTimePickerState()
-    val snackState = remember { SnackbarHostState() }
-
-    Box(propagateMinConstraints = false) {
-        Button(
-            modifier = Modifier.align(Alignment.Center),
-            onClick = { showTimePicker = true }
-        ) {
-            Text("Set Time")
-        }
-
-        SnackbarHost(hostState = snackState)
-    }
-
-    if (showTimePicker) {
-        TimePicker(
-            modifier = Modifier,
-            state = state,
-            colors = TimePickerDefaults.colors(
-
-                clockDialSelectedContentColor = MaterialTheme.colors.onPrimary,
-                selectorColor = MaterialTheme.colors.primary,
-                periodSelectorBorderColor = MaterialTheme.colors.primary,
-
-                periodSelectorSelectedContentColor = MaterialTheme.colors.primary,
-                timeSelectorSelectedContentColor = MaterialTheme.colors.primary,
-            ),
-            layoutType = TimePickerLayoutType.Vertical
-        )
-    }
-    
-    
-    
-}
-
+var mediaPlayer: MediaPlayer? = null
 
 fun setAlarm(alarmTime: String, isAggressive: Boolean, context: Context) {
     val hour = alarmTime.split(":")[0].toInt()
     val minute = alarmTime.split(":")[1].toInt()
+  mediaPlayer = MediaPlayer.create(context, R.raw.alarm  )
 
     val now = Calendar.getInstance()
     val alarmTimeCalendar = now.clone() as Calendar
@@ -208,16 +187,16 @@ fun setAlarm(alarmTime: String, isAggressive: Boolean, context: Context) {
         val handler = Handler()
         handler.postDelayed({
             isAlarmRinging = true
+            mediaPlayer?.setOnCompletionListener {
+                it.start()
+            }
+mediaPlayer?.start()
             // Esegui l'azione quando l'allarme scatta
             if (!isAggressive&& isAlarmRinging) {
-                // Se l'opzione aggressiva non è attivata
-                // Visualizza il messaggio "Sta suonando!"
+
                 showRingMessage(context)
             } else  {
 isQuiz=true
-                // Se l'opzione aggressiva è attivata
-                // Aggiungi la logica per la domanda random
-
 
                 showAggressiveQuestion(context)
             }
@@ -228,6 +207,16 @@ isQuiz=true
     }
 }
 
+fun stopAlarm() {
+    // Controlla se il MediaPlayer è inizializzato e sta suonando
+    mediaPlayer?.let {
+        if (it.isPlaying) {
+            it.stop()
+            it.release()
+            mediaPlayer = null
+        }
+    }
+}
 fun showRingMessage(context: Context) {
 
 
@@ -256,7 +245,6 @@ fun QuizContent() {
         // Domanda
         Text("Qual è il risultato di $aValue + $bValue?")
 
-        // Campo di testo per la risposta dell'utente
         OutlinedTextField(
             value = userAnswer,
             onValueChange = { userAnswer = it },
@@ -267,17 +255,15 @@ fun QuizContent() {
                 .padding(8.dp)
         )
 
-        // Bottone per controllare la risposta
         Button(
             onClick = {
                 val isCorrect = userAnswer.toDoubleOrNull() == correctResult
                 val feedback = if (isCorrect) "Corretto!" else "Sbagliato. Riprova."
 if (isCorrect)
 {isAggressive=false
-isButtonEnabled=true}
-                // Puoi fare qualcosa con il feedback, ad esempio mostrarlo all'utente
-                // Oppure passare alla prossima domanda, ecc.
-                // In questo esempio, stiamo solo stampando il feedback sulla console.
+isButtonEnabled=true
+isQuiz=false}
+
                 println(feedback)
             },
             modifier = Modifier
@@ -290,13 +276,11 @@ isButtonEnabled=true}
 }
 fun showImpostedMessage(context: Context) {
 
-    // Visualizza un messaggio o esegui altre azioni quando l'allarme suona
     Toast.makeText(context, "sveglia impostata!", Toast.LENGTH_SHORT).show()
 }
 
 fun showAggressiveQuestion(context: Context) {
-    // Aggiungi qui la logica per la domanda aggressiva
-    // Ad esempio, visualizza una domanda e aspetta una risposta
+
     var one=5;
     var two=3;
 
@@ -312,7 +296,7 @@ fun showErrorMessage(context: Context) {
 @Composable
 @Preview(showBackground = true)
 fun MainScreenPreview() {
-    MaterialTheme {
+    MyTheme {
         MainScreen()
     }
 }
