@@ -1,5 +1,6 @@
 package com.example.wakeup
 
+import android.app.TimePickerDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.Button
 import androidx.compose.runtime.setValue
@@ -13,14 +14,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import android.os.Bundle
 import android.os.Handler
 
+
+
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Colors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePicker
@@ -35,6 +40,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerLayoutType
 //import androidx.compose.material.Text
@@ -48,21 +54,19 @@ import androidx.compose.ui.layout.ContentScale
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
-val eee: Colors = lightColors(
-    primary = Color.Red,
-    secondary = Color(0xFFFFC107),
-    // Altri colori di tua scelta
-    onPrimary = Color.Black, // Colore del testo su colore primario
-    onSecondary = Color.Black, // Colore del testo su colore secondario
-    onBackground = Color.Black, // Colore del testo su sfondo
-    onSurface = Color.Black // Colore del testo su superficie
-)
+
 
 
 
@@ -86,9 +90,13 @@ var isButtonEnabled by  mutableStateOf(true)
 var isAlarmRinging by mutableStateOf(false)
 var isAggressive by mutableStateOf(false)
 var isQuiz by mutableStateOf(false)
+
+
 @Composable
 fun MainScreen() {
-    var alarmTime by remember { mutableStateOf("12:00") }
+  var alarmTime by remember { mutableStateOf("12:00") }
+
+
    // var isAggressive by remember { mutableStateOf(false) }
     // tracciare il sta suonando
 
@@ -107,6 +115,8 @@ fun MainScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
+
+        /*
         // Impostazione dell'orario della sveglia
         OutlinedTextField(
             value = alarmTime,
@@ -117,8 +127,8 @@ fun MainScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
-        )
-
+        )*/
+TimePickerWithDialog()
         // Impostazione dell'opzione aggressiva
 
         Switch(
@@ -179,7 +189,10 @@ fun MainScreen() {
     }
 }
 
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun test() {
+}
 var mediaPlayer: MediaPlayer? = null
 
 fun setAlarm(alarmTime: String, isAggressive: Boolean, context: Context) {
