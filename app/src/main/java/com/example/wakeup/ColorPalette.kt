@@ -12,7 +12,7 @@ fun MyTheme(
     val colors = lightColors(
         primary = Color.Green, // Modifica il colore principale
         secondary = Color.Blue, // Modifica il colore secondario
-        primaryVariant = Color.DarkGray, // Modifica il colore variante principale
+        primaryVariant = Color.Red, // Modifica il colore variante principale
         secondaryVariant = Color.Gray, // Modifica il colore variante secondario
         background = Color.White, // Modifica il colore di sfondo
         surface = Color.White, // Modifica il colore di superficie

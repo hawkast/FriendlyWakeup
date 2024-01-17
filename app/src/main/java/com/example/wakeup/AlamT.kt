@@ -3,15 +3,25 @@ package com.example.wakeup
 import android.content.Context
 import android.media.MediaPlayer
 import android.os.Handler
+import android.view.RoundedCorner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults.shape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,7 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.util.Calendar
-
+var imposted by mutableStateOf(false)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerWithDialog() {
@@ -95,7 +105,9 @@ fun TimePickerWithDialog() {
                           )
                     }
                     TextButton(onClick = {
+                        imposted=true
                         showDialog = false
+
                         selectedHour = timeState.hour
                         selectedMinute = timeState.minute
                         setAl(selectedHour,selectedMinute, isAggressive, context )
@@ -125,9 +137,89 @@ fun TimePickerWithDialog() {
             ) ){
             Text(text = "IMPOSTA SVEGLIA")
         }
-        Text(text = "La sveglia è impostata alle  ${timeState.hour} : ${timeState.minute}")
+        Box(
+            modifier = Modifier
+                .width(150.dp)
+                .height(40.dp)
+                .background(
+                    shape = RoundedCornerShape(20),
+                    color = Color.Gray
+                )
+        ) {
+            Text(
+                text = "La sveglia è impostata alle  ${timeState.hour} : ${timeState.minute}",
+                color = Color.Black,
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+
+        Switch(
+            checked = isAggressive,
+
+            onCheckedChange = {
+                if(imposted){
+                   } else{
+                isAggressive = it
+
+                isButtonEnabled=false}
+
+            },
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        // Pulsante per impostare l'allarme
+
+
+        Button(
+            onClick = {
+
+                selectedMinute=0
+                timeState.hour
+                timeState.minute
+
+                setAl(selectedHour,selectedMinute, isAggressive, context )
+
+            },
+            modifier = Modifier.fillMaxWidth(),
+
+            enabled = false,
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary,
+
+                ),
+            contentPadding = PaddingValues(horizontal = 25.dp, vertical = 8.dp)
+        ) {
+            Text("Cancella sveglia")
+        }
+
+        // Pulsante per spegnere l'allarme
+        Button(
+            onClick = {
+
+
+                isAlarmRinging = false
+                stopAlarm()
+                imposted=false
+
+
+            },
+            enabled= isButtonEnabled,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary,
+            ),
+        ) {
+            Text("Spegni Sveglia")
+        }
+
     }
-}
+    isButtonEnabled = !isAggressive
+    }
+
 fun setAl(selectedHour: Int, selectedMinute: Int, isAggressive: Boolean, context: Context) {
     mediaPlayer = MediaPlayer.create(context, R.raw.alarm)
 
@@ -159,7 +251,7 @@ fun setAl(selectedHour: Int, selectedMinute: Int, isAggressive: Boolean, context
             }
         }, timeDifferenceMillis)
     } else {
-        // L'orario della sveglia è nel passato, gestisci di conseguenza
+
         showErrorMessage(context)
     }
 }

@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import android.media.MediaPlayer
-
+import kotlin.random.Random
 import android.content.Context
 import androidx.compose.ui.tooling.preview.Preview
 import android.os.Bundle
@@ -94,7 +94,6 @@ var isQuiz by mutableStateOf(false)
 
 @Composable
 fun MainScreen() {
-  var alarmTime by remember { mutableStateOf("12:00") }
 
 
    // var isAggressive by remember { mutableStateOf(false) }
@@ -102,14 +101,30 @@ fun MainScreen() {
 
     val context = LocalContext.current
 
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
 
+    )
     Image(
-        painter = painterResource(id = R.drawable.imgsfondo), // Sostituisci con la tua risorsa immagine
+
+        painter = painterResource(id = R.drawable.imgsfondo),
+
         contentDescription = null,
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop
     )
-    if(isAggressive==true && isQuiz==true){ QuizContent()}
+    if(isAggressive){
+        Image(
+
+            painter = painterResource(id = R.drawable.img2),
+
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -130,14 +145,15 @@ fun MainScreen() {
         )*/
 TimePickerWithDialog()
         // Impostazione dell'opzione aggressiva
-
+/*
         Switch(
             checked = isAggressive,
 
             onCheckedChange = {
                 isAggressive = it
-                isAggressive=true
+
                 isButtonEnabled=false
+
             },
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -147,8 +163,7 @@ TimePickerWithDialog()
 
         Button(
             onClick = {
-           setAlarm(alarmTime,isAggressive,context)
-                showImpostedMessage(context)
+
             },
             modifier = Modifier.fillMaxWidth(),
 
@@ -161,19 +176,18 @@ TimePickerWithDialog()
             ),
             contentPadding = PaddingValues(horizontal = 25.dp, vertical = 8.dp)
         ) {
-            Text("imposta sveglia")
+            Text("Cancella sveglia")
         }
 
         // Pulsante per spegnere l'allarme
         Button(
             onClick = {
 
-                if( isAggressive==false){
-                    isButtonEnabled=true
+
                 isAlarmRinging = false
                 stopAlarm()
-                }
-               // else if (isAggressive==true){ isButtonEnabled=false}
+
+
             },
             enabled= isButtonEnabled,
             modifier = Modifier.fillMaxWidth(),
@@ -187,6 +201,11 @@ TimePickerWithDialog()
         }
 
     }
+    isButtonEnabled = !isAggressive
+
+ */
+}
+    if(isAggressive==true && isQuiz==true){ QuizContent()}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -250,57 +269,68 @@ fun showRingMessage(context: Context) {
                     Toast.makeText(context, "Sta suonando!", Toast.LENGTH_SHORT).show()
 
     }
-
+var userAnswer by   mutableStateOf("")
 @Composable
 fun QuizContent() {
     // Valori prefissati di 'a' e 'b'
     val aValue = 3.0
     val bValue = 5.0
-
+    //val numeroCasuale = generateRandomOrder()
     // Risultato corretto
-    val correctResult = 8.0
+    val correctResult by remember { mutableStateOf(generateRandomOrder().joinToString("").toInt()) }
 
-    var userAnswer by remember { mutableStateOf("") }
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .offset(y = 50.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
 
     ) {
-        // Domanda
-        Text(text="Qual è il risultato di $aValue + $bValue?",
-            color= Color.Black,
-            modifier=Modifier
-                .background(Color.Green))
+
+
 
         OutlinedTextField(
             value = userAnswer,
             onValueChange = { userAnswer = it },
             label = { Text("Inserisci la tua risposta") },
+
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
+
+
 colors=TextFieldDefaults.outlinedTextFieldColors(
     textColor = MaterialTheme.colors.onSecondary,
     backgroundColor = MaterialTheme.colors.primary
 
 )
-        )
 
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            NumericButton("1") { appendToUserAnswer("1") }
+            NumericButton("2") { appendToUserAnswer("2") }
+            NumericButton("3") { appendToUserAnswer("3") }
+            NumericButton("4") { appendToUserAnswer("4") }
+        }
         Button(
             onClick = {
-                val isCorrect = userAnswer.toDoubleOrNull() == correctResult
+                val isCorrect = userAnswer.toInt() == correctResult
                 val feedback = if (isCorrect) "Corretto!" else "Sbagliato. Riprova."
 if (isCorrect)
 {isAggressive=false
-isButtonEnabled=true
+//isButtonEnabled=true
 isQuiz=false}
 
                 println(feedback)
+                userAnswer=""
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -313,11 +343,58 @@ isQuiz=false}
         ) {
             Text("Verifica Risposta")
         }
+        Box(
+            modifier = Modifier
+                .width(150.dp)
+                .height(40.dp)
+                .background(
+                    shape = RoundedCornerShape(20),
+                    color = Color.Green
+                )
+        ) {
+            Text(text="L'ordine  di oggi è : $correctResult",
+                color= Color.Black,
+                modifier=Modifier
+                    .background(Color.Green)
+                    )
+        }
     }
 }
+// gnerare risposta ordine casuale
+fun generateRandomOrder(): List<Int> {
+    // Creare una lista con i numeri da 1 a 4
+    val numbers = (1..4).toList()
+
+    // Mescolare la lista in modo casuale
+    val ordineCasuale = numbers.shuffled()
+
+    return ordineCasuale
+}
+
 fun showImpostedMessage(context: Context) {
 
     Toast.makeText(context, "sveglia impostata!", Toast.LENGTH_SHORT).show()
+}
+@Composable
+fun NumericButton(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+
+            .padding(4.dp),
+        colors=ButtonDefaults.buttonColors(
+            contentColor = MaterialTheme.colors.primary,
+            containerColor = MaterialTheme.colors.onPrimary
+        )
+
+    ) {
+        Text(text)
+    }
+}
+
+fun appendToUserAnswer(number: String) {
+
+    userAnswer += number
 }
 
 fun showAggressiveQuestion(context: Context) {
@@ -339,5 +416,6 @@ fun showErrorMessage(context: Context) {
 fun MainScreenPreview() {
     MyTheme {
         MainScreen()
+       // QuizContent()
     }
 }
