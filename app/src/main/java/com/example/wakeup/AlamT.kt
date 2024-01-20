@@ -56,13 +56,13 @@ fun TimePickerWithDialog() {
         initialHour = selectedHour,
         initialMinute = selectedMinute
     )
-    var mytext by  remember {mutableStateOf(" la sveglia è impostata alle ${timeState.hour}:${timeState.minute}")}
+    var mytext by remember { mutableStateOf(" la sveglia è impostata alle ${timeState.hour}:${timeState.minute}") }
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
             modifier = Modifier.fillMaxWidth(),
 
-        ) {
+            ) {
             Column(
                 modifier = Modifier
                     .background(color = Color.LightGray.copy(alpha = .3f))
@@ -70,55 +70,62 @@ fun TimePickerWithDialog() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TimePicker(state = timeState,
-                    colors=TimePickerDefaults.colors(
+                TimePicker(
+                    state = timeState,
+                    colors = TimePickerDefaults.colors(
 
-                            clockDialColor = Color.Green,
-                            clockDialSelectedContentColor = Color.Red,
-                                clockDialUnselectedContentColor = Color.Black,
-                            selectorColor = Color.Black,
-                            periodSelectorBorderColor = Color.Blue,
-                            periodSelectorSelectedContainerColor = Color.Black,
-                            periodSelectorSelectedContentColor = Color.Green,
-                            periodSelectorUnselectedContainerColor = Color.White,
-                            periodSelectorUnselectedContentColor = Color.Black,
-                            timeSelectorSelectedContainerColor = Color.Black,
-                            timeSelectorSelectedContentColor = Color.Green,
+                        clockDialColor = Color.Green,
+                        clockDialSelectedContentColor = Color.Red,
+                        clockDialUnselectedContentColor = Color.Black,
+                        selectorColor = Color.Black,
+                        periodSelectorBorderColor = Color.Blue,
+                        periodSelectorSelectedContainerColor = Color.Black,
+                        periodSelectorSelectedContentColor = Color.Green,
+                        periodSelectorUnselectedContainerColor = Color.White,
+                        periodSelectorUnselectedContentColor = Color.Black,
+                        timeSelectorSelectedContainerColor = Color.Black,
+                        timeSelectorSelectedContentColor = Color.Green,
 
-                    ))
+                        )
+                )
                 Row(
                     modifier = Modifier
                         .padding(top = 12.dp)
-                        .fillMaxWidth(), horizontalArrangement = Arrangement.End,
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
 
-                ) {
-                    TextButton(onClick = { showDialog = false },
+                    ) {
+                    TextButton(
+                        onClick = { showDialog = false },
 
-                     colors=ButtonDefaults.textButtonColors(
+                        colors = ButtonDefaults.textButtonColors(
 
-                         contentColor = MaterialTheme.colors.onPrimary,
+                            contentColor = MaterialTheme.colors.onPrimary,
 
 
-                     )
+                            )
 
-                        ) {
-                        Text(text = "indietro"
-                          )
+                    ) {
+                        Text(
+                            text = "indietro"
+                        )
                     }
-                    TextButton(onClick = {
-                        imposted=true
-                        showDialog = false
+                    TextButton(
+                        onClick = {
+                            imposted = true
+                            showDialog = false
 
-                        selectedHour = timeState.hour
-                        selectedMinute = timeState.minute
-                        setAl(selectedHour,selectedMinute, isAggressive, context )
-                        showImpostedMessage(context)
-                        mytext="la sveglia è impostata alle ${timeState.hour} : ${timeState.minute}"
-                    },
-                        colors=ButtonDefaults.textButtonColors(
+                            selectedHour = timeState.hour
+                            selectedMinute = timeState.minute
+                            setAl(selectedHour, selectedMinute, isAggressive, context)
+                            showImpostedMessage(context)
+                            mytext =
+                                "la sveglia è impostata alle ${timeState.hour} : ${timeState.minute}"
+                        },
+                        colors = ButtonDefaults.textButtonColors(
                             contentColor = MaterialTheme.colors.onPrimary,
                         )
-                        ) {
+                    ) {
                         Text(text = "Conferma")
                     }
                 }
@@ -127,7 +134,8 @@ fun TimePickerWithDialog() {
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { showDialog = true },
+        Button(
+            onClick = { showDialog = true },
             modifier = Modifier.fillMaxWidth(),
 
             enabled = enabledSetAlarm,
@@ -137,7 +145,8 @@ fun TimePickerWithDialog() {
                 contentColor = MaterialTheme.colors.onPrimary,
 
 
-            ) ){
+                )
+        ) {
             Text(text = "IMPOSTA SVEGLIA")
         }
         Box(
@@ -182,7 +191,7 @@ fun TimePickerWithDialog() {
                     Text(
                         text = "Modalità Aggressiva:",
                         modifier = Modifier.weight(1f),
-                        color= Color.Green
+                        color = Color.Green
                     )
                     Switch(
                         checked = isAggressive,
@@ -191,19 +200,22 @@ fun TimePickerWithDialog() {
 
                             } else {
                                 isAggressive = it
-                               // isButtonEnabled = it
-                              //  enabledDeletButton=it
+                                // isButtonEnabled = it
+                                //  enabledDeletButton=it
                             }
                         },
                         modifier = Modifier.padding(bottom = 16.dp),
-                        colors= SwitchDefaults.colors(  checkedThumbColor = Color.Green,  // Colore del pollice quando lo switch è attivo
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color.Green,  // Colore del pollice quando lo switch è attivo
                             checkedTrackColor = Color.Green.copy(alpha = 0.5f),  // Colore della traccia quando lo switch è attivo
                             uncheckedThumbColor = Color.Gray,  // Colore del pollice quando lo switch è disattivo
-                            uncheckedTrackColor = Color.Gray.copy(alpha = 0.5f))
+                            uncheckedTrackColor = Color.Gray.copy(alpha = 0.5f)
+                        )
 
                     )
                 }
-            }}
+            }
+        }
 
 
         // Button to set alarm
@@ -211,18 +223,17 @@ fun TimePickerWithDialog() {
 
         Button(
             onClick = {
-                if(!imposted)
-                {
-                 showErrorImpostedMessage(context)
-                }
-                else {
+                if (!imposted) {
+                    showErrorImpostedMessage(context)
+                } else {
                     imposted = false
                     removecall()
                     showDeletedMessage(context)
-                    selectedHour=0;
-                    selectedMinute=0;
-mytext=" la sveglia è impostata alle ${selectedHour} : ${selectedMinute}"
-                } },
+                    selectedHour = 0
+                    selectedMinute = 0
+                    mytext = " la sveglia è impostata alle ${selectedHour} : ${selectedMinute}"
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
 
             enabled = enabledDeletButton,
@@ -244,11 +255,11 @@ mytext=" la sveglia è impostata alle ${selectedHour} : ${selectedMinute}"
 
                 isAlarmRinging = false
                 stopAlarm()
-                imposted=false
+                imposted = false
 
 
             },
-            enabled= isButtonEnabled,
+            enabled = isButtonEnabled,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
@@ -261,11 +272,9 @@ mytext=" la sveglia è impostata alle ${selectedHour} : ${selectedMinute}"
 
     }
     isButtonEnabled = !isAggressive
-    enabledDeletButton=!isAggressive
-    enabledSetAlarm=!isAggressive&& imposted
-    }
-
-
+    enabledDeletButton = !isAggressive
+    enabledSetAlarm = !(isAggressive && imposted)
+}
 //ManagerAlarm
 
 fun setAl(selectedHour: Int, selectedMinute: Int, isAggressive: Boolean, context: Context) {
