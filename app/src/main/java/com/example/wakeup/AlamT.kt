@@ -2,7 +2,6 @@ package com.example.wakeup
 
 import android.content.Context
 import android.media.MediaPlayer
-import android.os.Handler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -200,15 +199,14 @@ fun TimePickerWithDialog() {
 
                             } else {
                                 isAggressive = it
-                                // isButtonEnabled = it
-                                //  enabledDeletButton=it
+
                             }
                         },
                         modifier = Modifier.padding(bottom = 16.dp),
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.Green,  // Colore del pollice quando lo switch è attivo
-                            checkedTrackColor = Color.Green.copy(alpha = 0.5f),  // Colore della traccia quando lo switch è attivo
-                            uncheckedThumbColor = Color.Gray,  // Colore del pollice quando lo switch è disattivo
+                            checkedThumbColor = Color.Green,  // Color active switch
+                            checkedTrackColor = Color.Green.copy(alpha = 0.5f),  // Color track
+                            uncheckedThumbColor = Color.Gray,  // Color inactive switch
                             uncheckedTrackColor = Color.Gray.copy(alpha = 0.5f)
                         )
 
