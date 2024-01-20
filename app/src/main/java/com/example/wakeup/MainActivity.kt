@@ -346,16 +346,23 @@ isQuiz=false}
         Box(
             modifier = Modifier
                 .width(150.dp)
-                .height(40.dp)
+                .height(50.dp)
                 .background(
                     shape = RoundedCornerShape(20),
                     color = Color.Green
                 )
         ) {
             Text(text="L'ordine  di oggi è : $correctResult",
+fontSize=20.sp,
+fontWeight=FontWeight.Bold,
+
                 color= Color.Black,
+
                 modifier=Modifier
+
                     .background(Color.Green)
+
+
                     )
         }
     }
@@ -374,6 +381,14 @@ fun generateRandomOrder(): List<Int> {
 fun showImpostedMessage(context: Context) {
 
     Toast.makeText(context, "sveglia impostata!", Toast.LENGTH_SHORT).show()
+}
+fun showDeletedMessage(context: Context) {
+
+    Toast.makeText(context, "sveglia cancellata!", Toast.LENGTH_SHORT).show()
+}
+fun showErrorImpostedMessage(context: Context) {
+
+    Toast.makeText(context, "nessuna sveglia impostata!!", Toast.LENGTH_SHORT).show()
 }
 @Composable
 fun NumericButton(text: String, onClick: () -> Unit) {
@@ -398,16 +413,12 @@ fun appendToUserAnswer(number: String) {
 }
 
 fun showAggressiveQuestion(context: Context) {
-
-    var one=5;
-    var two=3;
-
     Toast.makeText(context, "Domanda aggressiva!", Toast.LENGTH_SHORT).show()
 }
 
 fun showErrorMessage(context: Context) {
     // Gestisci l'errore quando l'orario della sveglia è nel passato
-    Toast.makeText(context, "Errore: l'orario della sveglia è nel passato", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, "Errore: verifica che AM/PM siano impostati correttamente!", Toast.LENGTH_SHORT).show()
 }
 
 

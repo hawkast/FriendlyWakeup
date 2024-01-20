@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.os.Handler
 import android.view.RoundedCorner
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,9 +17,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults.shape
@@ -43,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.util.Calendar
+var enabledDeletButton by   mutableStateOf(true)
 var imposted by mutableStateOf(false)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,11 +56,13 @@ fun TimePickerWithDialog() {
     var selectedHour by remember { mutableIntStateOf(0) }
     var selectedMinute by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
+
+
     val timeState = rememberTimePickerState(
         initialHour = selectedHour,
         initialMinute = selectedMinute
     )
-
+    var mytext by  remember {mutableStateOf(" la sveglia è impostata alle ${timeState.hour}:${timeState.minute}")}
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -92,11 +99,11 @@ fun TimePickerWithDialog() {
 
                 ) {
                     TextButton(onClick = { showDialog = false },
-                       // shape = RoundedCornerShape(12.dp),
+
                      colors=ButtonDefaults.textButtonColors(
 
                          contentColor = MaterialTheme.colors.onPrimary,
-                        // containerColor = MaterialTheme.colors.onPrimary,
+
 
                      )
 
@@ -111,6 +118,8 @@ fun TimePickerWithDialog() {
                         selectedHour = timeState.hour
                         selectedMinute = timeState.minute
                         setAl(selectedHour,selectedMinute, isAggressive, context )
+                        showImpostedMessage(context)
+                        mytext="la sveglia è impostata alle ${timeState.hour} : ${timeState.minute}"
                     },
                         colors=ButtonDefaults.textButtonColors(
                             contentColor = MaterialTheme.colors.onPrimary,
@@ -126,7 +135,7 @@ fun TimePickerWithDialog() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Button(onClick = { showDialog = true },
             modifier = Modifier.fillMaxWidth(),
-// colore per i button
+
             enabled = true,
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
@@ -143,46 +152,86 @@ fun TimePickerWithDialog() {
                 .height(40.dp)
                 .background(
                     shape = RoundedCornerShape(20),
-                    color = Color.Gray
+                    color = Color.DarkGray
                 )
         ) {
             Text(
-                text = "La sveglia è impostata alle  ${timeState.hour} : ${timeState.minute}",
-                color = Color.Black,
+
+                text = mytext,
+
+                color = Color.Green,
                 modifier = Modifier.padding(4.dp)
             )
         }
 
-        Switch(
-            checked = isAggressive,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(40.dp)
+                    .background(
+                        shape = RoundedCornerShape(20),
+                        color = Color.DarkGray
 
-            onCheckedChange = {
-                if(imposted){
-                   } else{
-                isAggressive = it
+                    ),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Modalità Aggressiva:",
+                        modifier = Modifier.weight(1f),
+                        color= Color.Green
+                    )
+                    Switch(
+                        checked = isAggressive,
+                        onCheckedChange = {
+                            if (imposted) {
 
-                isButtonEnabled=false}
+                            } else {
+                                isAggressive = it
+                               // isButtonEnabled = it
+                              //  enabledDeletButton=it
+                            }
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp),
+                        colors= SwitchDefaults.colors(  checkedThumbColor = Color.Green,  // Colore del pollice quando lo switch è attivo
+                            checkedTrackColor = Color.Green.copy(alpha = 0.5f),  // Colore della traccia quando lo switch è attivo
+                            uncheckedThumbColor = Color.Gray,  // Colore del pollice quando lo switch è disattivo
+                            uncheckedTrackColor = Color.Gray.copy(alpha = 0.5f))
 
-            },
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+                    )
+                }
+            }}
+
 
         // Pulsante per impostare l'allarme
 
 
         Button(
             onClick = {
-
-                selectedMinute=0
-                timeState.hour
-                timeState.minute
-
-                setAl(selectedHour,selectedMinute, isAggressive, context )
-
-            },
+                if(!imposted)
+                {
+                 showErrorImpostedMessage(context)
+                }
+                else {
+                    imposted = false
+                    removecall()
+                    showDeletedMessage(context)
+                    selectedHour=0;
+                    selectedMinute=0;
+mytext=" la sveglia è impostata alle ${selectedHour} : ${selectedMinute}"
+                } },
             modifier = Modifier.fillMaxWidth(),
 
-            enabled = false,
+            enabled = enabledDeletButton,
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colors.primary,
@@ -218,8 +267,9 @@ fun TimePickerWithDialog() {
 
     }
     isButtonEnabled = !isAggressive
+    enabledDeletButton=!isAggressive
     }
-
+val handler = Handler()
 fun setAl(selectedHour: Int, selectedMinute: Int, isAggressive: Boolean, context: Context) {
     mediaPlayer = MediaPlayer.create(context, R.raw.alarm)
 
@@ -230,11 +280,14 @@ fun setAl(selectedHour: Int, selectedMinute: Int, isAggressive: Boolean, context
     alarmTimeCalendar.set(Calendar.SECOND, 0)
     alarmTimeCalendar.set(Calendar.MILLISECOND, 0)
 
+
+
     val timeDifferenceMillis = alarmTimeCalendar.timeInMillis - now.timeInMillis
 
     if (timeDifferenceMillis > 0) {
         // Imposta l'allarme
-        val handler = Handler()
+       // val handler = Handler()
+
         handler.postDelayed({
             isAlarmRinging = true
             mediaPlayer?.setOnCompletionListener {
@@ -255,6 +308,17 @@ fun setAl(selectedHour: Int, selectedMinute: Int, isAggressive: Boolean, context
         showErrorMessage(context)
     }
 }
+fun removecall(){ handler.removeCallbacksAndMessages(null)}
+
+////////////////////////
+
+@Composable
+fun showTextImposted(initial_hour : Int,initial_minute : Int) {
+   Text(
+   text = " la sveglia è impostata alle ${initial_hour} : ${initial_minute}")
+
+}
+
 
 @Composable
 @Preview(showBackground = true)
