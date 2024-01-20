@@ -23,7 +23,7 @@ The app has been developed using Kotlin for functional aspects and Jetpack Compo
 To use the application, follow these steps:
 
 1. Import the repository using VCS offered by the IDE, using the following URL: `https://github.com/hawkast/FriendlyWakeup.git`.
-2. Create a new project and select "Import Repository."
+2. Create a new project and select "Get from Version Control or GitHub icon."
 3. Launch the application on a physical or virtual Android device via an emulator.
 
 Once the application is launched, the following buttons will be available:
