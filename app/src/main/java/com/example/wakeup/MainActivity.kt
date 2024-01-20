@@ -61,7 +61,7 @@ fun MainScreen() {
 
     )
 
-    Text(text = "FriendlyWakeUp by Lorenzo Guerrini",
+    Text(text = "FriendlyAlarm by Lorenzo Guerrini",
         modifier=Modifier
             .align(Alignment.BottomCenter),
            // .padding(bottom = 100.dp),

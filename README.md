@@ -1,6 +1,6 @@
-# FriendlyWakeUp
+# FriendlyAlarm
 
-FriendlyWakeUp is an alarm application designed to prevent users from easily turning off the alarm and going back to sleep. The app offers two alarm modes: standard mode and aggressive mode.
+FriendlyAlarm is an alarm application designed to prevent users from easily turning off the alarm and going back to sleep. The app offers two alarm modes: standard mode and aggressive mode.
 
 ## Features
 
