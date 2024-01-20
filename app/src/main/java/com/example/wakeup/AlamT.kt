@@ -3,8 +3,6 @@ package com.example.wakeup
 import android.content.Context
 import android.media.MediaPlayer
 import android.os.Handler
-import android.view.RoundedCorner
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,17 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AlertDialogDefaults.shape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,8 +40,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.util.Calendar
-var enabledDeletButton by   mutableStateOf(true)
-var imposted by mutableStateOf(false)
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerWithDialog() {
@@ -136,7 +130,7 @@ fun TimePickerWithDialog() {
         Button(onClick = { showDialog = true },
             modifier = Modifier.fillMaxWidth(),
 
-            enabled = true,
+            enabled = enabledSetAlarm,
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colors.primary,
@@ -212,7 +206,7 @@ fun TimePickerWithDialog() {
             }}
 
 
-        // Pulsante per impostare l'allarme
+        // Button to set alarm
 
 
         Button(
@@ -243,7 +237,7 @@ mytext=" la sveglia è impostata alle ${selectedHour} : ${selectedMinute}"
             Text("Cancella sveglia")
         }
 
-        // Pulsante per spegnere l'allarme
+        // button to stop alarm
         Button(
             onClick = {
 
@@ -268,8 +262,12 @@ mytext=" la sveglia è impostata alle ${selectedHour} : ${selectedMinute}"
     }
     isButtonEnabled = !isAggressive
     enabledDeletButton=!isAggressive
+    enabledSetAlarm=!isAggressive&& imposted
     }
-val handler = Handler()
+
+
+//ManagerAlarm
+
 fun setAl(selectedHour: Int, selectedMinute: Int, isAggressive: Boolean, context: Context) {
     mediaPlayer = MediaPlayer.create(context, R.raw.alarm)
 
@@ -281,12 +279,15 @@ fun setAl(selectedHour: Int, selectedMinute: Int, isAggressive: Boolean, context
     alarmTimeCalendar.set(Calendar.MILLISECOND, 0)
 
 
-
+    if (alarmTimeCalendar.timeInMillis <= now.timeInMillis) {
+        showErrorMessage(context)
+        return
+    }
     val timeDifferenceMillis = alarmTimeCalendar.timeInMillis - now.timeInMillis
 
     if (timeDifferenceMillis > 0) {
-        // Imposta l'allarme
-       // val handler = Handler()
+        // set alarm
+
 
         handler.postDelayed({
             isAlarmRinging = true
@@ -303,21 +304,23 @@ fun setAl(selectedHour: Int, selectedMinute: Int, isAggressive: Boolean, context
                 showAggressiveQuestion(context)
             }
         }, timeDifferenceMillis)
-    } else {
-
-        showErrorMessage(context)
     }
 }
 fun removecall(){ handler.removeCallbacksAndMessages(null)}
 
-////////////////////////
 
-@Composable
-fun showTextImposted(initial_hour : Int,initial_minute : Int) {
-   Text(
-   text = " la sveglia è impostata alle ${initial_hour} : ${initial_minute}")
-
+fun stopAlarm() {
+    // Check if the MediaPlayer is initialized and playing
+    mediaPlayer?.let {
+        if (it.isPlaying) {
+            it.stop()
+            it.release()
+            mediaPlayer = null
+        }
+    }
 }
+
+
 
 
 @Composable
