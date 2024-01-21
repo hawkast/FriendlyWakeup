@@ -86,7 +86,7 @@ fun MainScreen() {
     ) {
 TimePickerWithDialog()
 }
-    if(isAggressive==true && isQuiz==true){ QuizContent()}
+    if(isAggressive && isQuiz){ QuizContent()}
 }
 
 
