@@ -131,7 +131,7 @@ fun TimePickerWithDialog() {
             }
         }
     }
-
+ // button to set alarm
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Button(
             onClick = { showDialog = true },
@@ -216,7 +216,7 @@ fun TimePickerWithDialog() {
         }
 
 
-        // Button to set alarm
+        // Button to delete alarm
 
 
         Button(
@@ -270,7 +270,7 @@ fun TimePickerWithDialog() {
 
     }
     isButtonEnabled = !isAggressive
-    enabledDeletButton = !isAggressive
+    enabledDeletButton = !(isAggressive && isAlarmRinging)
     enabledSetAlarm = !(isAggressive && imposted)
 }
 //ManagerAlarm
