@@ -34,6 +34,9 @@ Once the application is launched, the following buttons will be available:
 
 NB: Once the alarm is set, it is not possible to change the mode. It is recommended to select the mode first and then set the alarm.
 
+## Presentation and test
+- Documents folder
+
 ## Developer
 - Lorenzo Guerrini
 
