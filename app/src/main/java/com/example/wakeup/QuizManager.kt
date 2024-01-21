@@ -92,6 +92,7 @@ fun QuizContent() {
                     if (isCorrect) {
                         isAggressive = false
                         isQuiz = false
+                    } else{ showErrorPin(context)
                     }
 
                     println(feedback)

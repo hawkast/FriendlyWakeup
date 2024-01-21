@@ -26,4 +26,6 @@ fun showRingMessage(context: Context) {
     fun showErrorImpostedMessage(context: Context) {
         Toast.makeText(context, "nessuna sveglia impostata!!", Toast.LENGTH_SHORT).show()
     }
-
+fun showErrorPin(context: Context) {
+    Toast.makeText(context, "Ordine pin non corretto, RIPROVA!", Toast.LENGTH_SHORT).show()
+}
